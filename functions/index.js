@@ -22,5 +22,13 @@ const functions = require('firebase-functions');
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
 
+// Handle the Dialogflow intent named 'inicial'.
+app.intent('inicial', (conv) => {});
+
+// Handle the Dialogflow intent named 'inicial - no'.
+app.intent('inicial - no', (conv) => {
+    conv.close('Empezemos!');
+});
+
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
