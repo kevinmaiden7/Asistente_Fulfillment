@@ -14,7 +14,10 @@
 'use strict';
 
 // Import the Dialogflow module from the Actions on Google client library.
-const {dialogflow} = require('actions-on-google');
+const {
+    dialogflow,
+    Suggestions
+} = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
@@ -23,11 +26,23 @@ const functions = require('firebase-functions');
 const app = dialogflow({debug: true});
 
 // Handle the Dialogflow intent named 'inicial'.
-app.intent('inicial', (conv) => {});
+app.intent('Default Welcome Intent', (conv) => {
+    conv.ask('Te has conectado al servicio de reporte de incidentes para tu aseguradora. ' +
+    'Antes que nada, ¿hay personas heridas?');
+    conv.ask(new Suggestions('Si', 'No'));
+});
 
 // Handle the Dialogflow intent named 'inicial - no'.
 app.intent('inicial - no', (conv) => {
-    conv.close('Empezemos!');
+    conv.ask('Perfecto, procedamos con unas preguntas. ' + 
+    '¿Cuál es tu nombre?');
+});
+
+// Handle the Dialogflow intent named 'name'.
+// The intent collects a parameter named 'person'.
+app.intent('name', (conv, {person}) => {
+    const name = person.name;
+    conv.ask('Gracias ' + name + ', He recibido tu nombre');
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
