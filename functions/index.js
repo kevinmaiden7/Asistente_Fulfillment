@@ -49,5 +49,12 @@ app.intent('nombre', (conv, {person}) => {
     '¿Cuál es tu número de identificación?');
 });
 
+// Handle the Dialogflow intent named 'id'.
+// The intent collects a parameter named 'number'.
+app.intent('id', (conv, {number}) => {
+    var id = number;
+    conv.ask('Gracias, he recibido tu identificación: ' + id);
+});
+
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
