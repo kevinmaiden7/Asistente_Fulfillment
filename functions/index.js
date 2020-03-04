@@ -42,18 +42,19 @@ app.intent('heridos - no', (conv) => {
 // The intent collects a parameter named 'person'.
 app.intent('nombre', (conv, {person}) => {
     var completeName = "";
-    for (const item of person){ 
+    for (const item of person){
         completeName = completeName + ' ' + item.name;
     }
-    conv.ask('Gracias ' + completeName + ', He recibido tu nombre. ' +
+    conv.data.name = completeName;
+    conv.ask('Gracias ' + completeName + ', he recibido tu nombre. ' +
     '¿Cuál es tu número de identificación?');
 });
 
 // Handle the Dialogflow intent named 'id'.
 // The intent collects a parameter named 'number'.
 app.intent('id', (conv, {number}) => {
-    var id = number;
-    conv.ask('Gracias, he recibido tu identificación: ' + id);
+    conv.data.id = number;
+    conv.ask('Gracias '+ conv.data.name +', he recibido tu identificación: ' + number);
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
