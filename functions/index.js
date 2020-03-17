@@ -16,7 +16,10 @@
 // Import the Dialogflow module from the Actions on Google client library.
 const {
     dialogflow,
-    Suggestions
+    Suggestions,
+    Permission,
+    Carousel,
+    Image
 } = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
@@ -54,8 +57,43 @@ app.intent('nombre', (conv, {person}) => {
 // The intent collects a parameter named 'number'.
 app.intent('id', (conv, {number}) => {
     conv.data.id = number;
-    conv.ask('Gracias '+ conv.data.name +', he recibido tu identificación: ' + number);
+    conv.ask('Gracias '+ conv.data.name +', he recibido tu identificación. ' + 
+    '¿A cuál compañía aseguradora estás afiliado?');
+    // If the user is using a screened device, display the carousel
+    if (conv.screen) return conv.ask(insuranceCarousel());
 });
+
+// Handle the Dialogflow intent named 'aseguradora'.
+app.intent('aseguradora', (conv, {aseguradora}) => {
+    const nombreAseguradora = conv.arguments.get('OPTION') || aseguradora;
+    conv.data.aseguradora = nombreAseguradora;
+    conv.ask('Gracias '+ conv.data.name +', he registrado tu aseguradora: ' + conv.data.aseguradora); 
+});
+
+// In the case the user is interacting with the Action on a screened device
+// The Insurance Carousel will display a carousel of insurance carriers
+const insuranceCarousel = () => {
+    const carousel = new Carousel({
+     items: {
+       'suramericana': {
+         title: 'Suramericana',
+         synonyms: ['grupo sura', 'seguros generales suramericana', 'sura'],
+         image: new Image({
+           url: 'https://www.sura.com/rsa/assets/img/sura-logo.png',
+           alt: 'suramericana',
+         }),
+       },
+       'allianz': {
+         title: 'Allianz',
+         synonyms: ['allianz seguros', 'allianz colombia'],
+         image: new Image({
+           url: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Allianz.png',
+           alt: 'allianz',
+         }),
+       }
+   }});
+   return carousel;
+  };
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
