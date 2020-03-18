@@ -50,11 +50,25 @@ app.intent('nombre', (conv, {person}) => {
     '¿Cuál es tu número de identificación?');
 });
 
+// List of available insurance carriers
+const insuranceCarriers = ['Sura', 'Allianz', 'Solidaria', 'Mapfre', 'Liberty'];
+
 // Handle the Dialogflow intent named 'id'.
 // The intent collects a parameter named 'number'.
 app.intent('id', (conv, {number}) => {
     conv.data.id = number;
-    conv.ask('Gracias '+ conv.data.name +', he recibido tu identificación: ' + number);
+    conv.ask('Gracias '+ conv.data.name +', he recibido tu identificación. ' + 
+    '¿A cuál compañía aseguradora estás afiliado?');
+    conv.ask(new Suggestions(insuranceCarriers));
+});
+
+// Handle the Dialogflow intent named 'aseguradora'.
+// The intent collects a parameter named 'insuranceCarrier'.
+app.intent('aseguradora', (conv, {insuranceCarrier}) => {
+  conv.data.aseguradora = insuranceCarrier;
+  conv.ask('Gracias '+ conv.data.name +', he registrado tu aseguradora: ' + conv.data.aseguradora +
+  '. Ahora necesito una información más detallada del vehículo. ' + 
+  '¿Cuál es la placa?');
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
