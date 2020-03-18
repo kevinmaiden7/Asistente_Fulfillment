@@ -17,7 +17,6 @@
 const {
     dialogflow,
     Suggestions,
-    Permission,
     Carousel,
     Image
 } = require('actions-on-google');
@@ -64,10 +63,13 @@ app.intent('id', (conv, {number}) => {
 });
 
 // Handle the Dialogflow intent named 'aseguradora'.
-app.intent('aseguradora', (conv, {aseguradora}) => {
-    const nombreAseguradora = conv.arguments.get('OPTION') || aseguradora;
-    conv.data.aseguradora = nombreAseguradora;
-    conv.ask('Gracias '+ conv.data.name +', he registrado tu aseguradora: ' + conv.data.aseguradora); 
+// The intent collects a parameter named 'insuranceCarrier'.
+app.intent('aseguradora', (conv, {insuranceCarrier}) => {
+    insuranceCarrier = conv.arguments.get('OPTION') || insuranceCarrier;
+    conv.data.aseguradora = insuranceCarrier;
+    conv.ask('Gracias '+ conv.data.name +', he registrado tu aseguradora: ' + conv.data.aseguradora +
+    '. Ahora necesito una información más detallada del vehículo. ' + 
+    '¿Cuál es la placa?');
 });
 
 // In the case the user is interacting with the Action on a screened device
@@ -90,7 +92,31 @@ const insuranceCarousel = () => {
            url: 'https://upload.wikimedia.org/wikipedia/commons/1/1c/Allianz.png',
            alt: 'allianz',
          }),
-       }
+       },
+       'solidaria': {
+        title: 'Solidaria',
+        synonyms: ['aseguradora solidaria', 'aseguradora solidaria de colombia'],
+        image: new Image({
+          url: 'https://gestionsolidaria.com/wp-content/uploads/2019/05/Aseguradora-Solidaria-.png',
+          alt: 'solidaria',
+        }),
+      },
+      'mapfre': {
+        title: 'Mapfre',
+        synonyms: ['mapfre seguros', 'mapfre seguros generales de colombia'],
+        image: new Image({
+          url: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Mapfre_logo.svg/1200px-Mapfre_logo.svg.png',
+          alt: 'mapfre',
+        }),
+      },
+      'liberty': {
+        title: 'Liberty',
+        synonyms: ['liberty seguros', 'liberty seguros colombia'],
+        image: new Image({
+          url: 'https://upload.wikimedia.org/wikipedia/commons/d/d4/LogotipoLiberty.jpg',
+          alt: 'liberty',
+        }),
+      },
    }});
    return carousel;
   };
