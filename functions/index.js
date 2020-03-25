@@ -76,8 +76,14 @@ app.intent('aseguradora', (conv, {insuranceCarrier}) => {
 app.intent('placa', (conv, {any}) => {
     conv.data.placa = any;
     conv.ask('He registrado tu placa: ' + conv.data.placa +
-    '¿Cuál es el tipo de vehículo?');
+    ', ¿Cuál es el tipo de vehículo?');
   });
+
+app.intent('tipo', (conv, {any}) => {
+    conv.data.tipo = any;
+    conv.ask('He registrado el tipo: ' + conv.data.tipo +
+    ', ¿De qué color es el vehículo?');
+});
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
 exports.dialogflowFirebaseFulfillment = functions.https.onRequest(app);
