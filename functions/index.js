@@ -1,29 +1,19 @@
-// Copyright 2018, Google, Inc.
-// Licensed under the Apache License, Version 2.0 (the 'License');
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//    http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an 'AS IS' BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 'use strict';
 
 // Import the Dialogflow module from the Actions on Google client library.
-const {
-    dialogflow,
-    Suggestions
-} = require('actions-on-google');
+const { dialogflow,Suggestions} = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
 
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
+
+// List of available insurance carriers
+const insuranceCarriers = ['Sura', 'Allianz', 'Solidaria', 'Mapfre', 'Liberty'];
+
+// List of available colors
+const colors = ['Rojo', 'Verde', 'Amarillo', 'Verde', 'Azul'];
 
 // Handle the Dialogflow default initial intent.
 app.intent('Default Welcome Intent', (conv) => {
@@ -49,9 +39,6 @@ app.intent('nombre', (conv, {person}) => {
     conv.ask('Gracias ' + completeName + ', he recibido tu nombre. ' +
     '¿Cuál es tu número de identificación?');
 });
-
-// List of available insurance carriers
-const insuranceCarriers = ['Sura', 'Allianz', 'Solidaria', 'Mapfre', 'Liberty'];
 
 // Handle the Dialogflow intent named 'id'.
 // The intent collects a parameter named 'number'.
@@ -79,10 +66,45 @@ app.intent('placa', (conv, {any}) => {
     ', ¿Cuál es el tipo de vehículo?');
   });
 
+// Handle the Dialogflow intent named 'tipo'.
+// The intent collects a parameter named 'any'.
 app.intent('tipo', (conv, {any}) => {
     conv.data.tipo = any;
     conv.ask('He registrado el tipo: ' + conv.data.tipo +
     ', ¿De qué color es el vehículo?');
+    conv.ask(new Suggestions(colors));
+});
+
+// Handle the Dialogflow intent named 'color'.
+// The intent collects a parameter named 'color'.
+app.intent('color', (conv, {color}) => {
+    conv.data.color = color;
+    conv.ask('He registrado el color de tu vehículo con: ' + conv.data.color + '. Ahora, ¿Cuál es la marca?');
+  });
+
+// Handle the Dialogflow intent named 'marca'.
+// The intent collects a parameter named 'any'.
+app.intent('marca', (conv, {any}) => {
+    conv.data.marca = any;
+    conv.ask('Fue reportada la marca de tu vehículo como: ' + conv.data.marca + '.' +
+    'Ahora, ¿Cuál es la modelo de tu vehículo?');
+});
+
+// Handle the Dialogflow intent named 'modelo'.
+// The intent collects a parameter named 'any'.
+app.intent('modelo', (conv, {any}) => {
+    conv.data.modelo = any;
+    conv.ask('El modelo de tu vehículo es ' + conv.data.modelo + '.' +
+    'Ahora, ¿De qué año es el vehículo? ');
+});
+
+// Handle the Dialogflow intent named 'year'.
+// The intent collects a parameter named 'number'.
+app.intent('year', (conv, {number}) => {
+    conv.data.year = number;
+    conv.ask('El año de tu vehículo es ' + conv.data.year + '.' +
+    'Hemos completado las preguntas; tu reporte será generado. Recuerda que tomar fotos de la escena te será de gran ayuda, igual que tomar datos de contacto de personas involucradas.'
+    +'Hasta luego!');
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
