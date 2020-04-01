@@ -1,7 +1,8 @@
+//
 'use strict';
 
 // Import the Dialogflow module from the Actions on Google client library.
-const { dialogflow,Suggestions} = require('actions-on-google');
+const { dialogflow, Suggestions} = require('actions-on-google');
 
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
@@ -12,8 +13,8 @@ const app = dialogflow({debug: true});
 // List of available insurance carriers
 const insuranceCarriers = ['Sura', 'Allianz', 'Solidaria', 'Mapfre', 'Liberty'];
 
-// List of available colors
-const colors = ['Rojo', 'Verde', 'Amarillo', 'Verde', 'Azul'];
+// List of most common colors
+const colors = ['rojo', 'azul', 'blanco', 'negro', 'gris'];
 
 // Handle the Dialogflow default initial intent.
 app.intent('Default Welcome Intent', (conv) => {
@@ -64,7 +65,7 @@ app.intent('placa', (conv, {any}) => {
     conv.data.placa = any;
     conv.ask('He registrado tu placa: ' + conv.data.placa +
     ', ¿Cuál es el tipo de vehículo?');
-  });
+});
 
 // Handle the Dialogflow intent named 'tipo'.
 // The intent collects a parameter named 'any'.
@@ -79,32 +80,32 @@ app.intent('tipo', (conv, {any}) => {
 // The intent collects a parameter named 'color'.
 app.intent('color', (conv, {color}) => {
     conv.data.color = color;
-    conv.ask('He registrado el color de tu vehículo con: ' + conv.data.color + '. Ahora, ¿Cuál es la marca?');
-  });
+    conv.ask('He registrado el color de tu vehículo como: ' + conv.data.color + '. Ahora, ¿Cuál es la marca?');
+});
 
 // Handle the Dialogflow intent named 'marca'.
 // The intent collects a parameter named 'any'.
 app.intent('marca', (conv, {any}) => {
     conv.data.marca = any;
     conv.ask('Fue reportada la marca de tu vehículo como: ' + conv.data.marca + '.' +
-    'Ahora, ¿Cuál es la modelo de tu vehículo?');
+    'Ahora, ¿Cuál es el modelo de tu vehículo?');
 });
 
 // Handle the Dialogflow intent named 'modelo'.
 // The intent collects a parameter named 'any'.
 app.intent('modelo', (conv, {any}) => {
     conv.data.modelo = any;
-    conv.ask('El modelo de tu vehículo es ' + conv.data.modelo + '.' +
-    'Ahora, ¿De qué año es el vehículo? ');
+    conv.ask('El modelo de tu vehículo es: ' + conv.data.modelo + '.' +
+    ' Ahora, ¿De qué año es el vehículo?');
 });
 
 // Handle the Dialogflow intent named 'year'.
 // The intent collects a parameter named 'number'.
 app.intent('year', (conv, {number}) => {
     conv.data.year = number;
-    conv.ask('El año de tu vehículo es ' + conv.data.year + '.' +
-    'Hemos completado las preguntas; tu reporte será generado. Recuerda que tomar fotos de la escena te será de gran ayuda, igual que tomar datos de contacto de personas involucradas.'
-    +'Hasta luego!');
+    conv.close('El año de tu vehículo es ' + conv.data.year +
+    ' Hemos completado las preguntas; tu reporte será generado. Recuerda que tomar fotos de la escena te será de gran ayuda, igual que tomar datos de contacto de personas involucradas.'
+    +' Hasta luego!');
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
