@@ -16,6 +16,22 @@ const insuranceCarriers = ['Sura', 'Allianz', 'Solidaria', 'Mapfre', 'Liberty'];
 // List of most common colors
 const colors = ['rojo', 'azul', 'blanco', 'negro', 'gris'];
 
+// Axios Library
+const axios = require('axios');
+
+//const REPORTS_ENDPOINT = '';
+
+// Performing an HTTP POST request with Axios Library
+function executePost(data){
+    axios.post(REPORTS_ENDPOINT, data)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+}
+
 // Handle the Dialogflow default initial intent.
 app.intent('Default Welcome Intent', (conv) => {
     conv.ask('Te has conectado al servicio de reporte de incidentes para tu aseguradora. ' +
@@ -37,6 +53,9 @@ app.intent('nombre', (conv, {person}) => {
         completeName = completeName + ' ' + item.name;
     }
     conv.data.name = completeName;
+
+    executePost(conv.data); // !
+
     conv.ask('Gracias ' + completeName + ', he recibido tu nombre. ' +
     '¿Cuál es tu número de identificación?');
 });
