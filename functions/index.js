@@ -17,19 +17,19 @@ const insuranceCarriers = ['Sura', 'Allianz', 'Solidaria', 'Mapfre', 'Liberty'];
 const colors = ['rojo', 'azul', 'blanco', 'negro', 'gris'];
 
 // Axios Library
-const axios = require('axios');
+const axios = require('axios').default;
 
-//const REPORTS_ENDPOINT = '';
+const REPORTS_ENDPOINT = 'https://crash-reports-app.herokuapp.com/reports';
 
 // Performing an HTTP POST request with Axios Library
 function executePost(data){
     axios.post(REPORTS_ENDPOINT, data)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+    .then((res) => {
+      console.log("response: ", res);
+    })
+    .catch((err) => {
+      console.log("error: ", err);
+    })
 }
 
 // Handle the Dialogflow default initial intent.
