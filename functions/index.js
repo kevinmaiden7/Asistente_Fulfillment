@@ -114,7 +114,7 @@ app.intent('modelo', (conv, {any}) => {
 // The intent collects a parameter named 'number'.
 app.intent('year', (conv, {number}) => {
     conv.data.year = number;
-    storeData(conv.data); // send data to firestore (data base)
+    storeData(conv.data); // send data to firestore (database)
     conv.close('El año de tu vehículo fue registrado: ' + conv.data.year + '.' +
     'Hemos completado las preguntas; tu reporte será generado. Recuerda que tomar fotos de la escena te será de gran ayuda, igual que tomar datos de contacto de personas involucradas.'
     + ' Hasta luego!');
