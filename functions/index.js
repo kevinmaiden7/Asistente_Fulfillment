@@ -7,6 +7,22 @@ const { dialogflow, Suggestions} = require('actions-on-google');
 // Import the firebase-functions package for deployment.
 const functions = require('firebase-functions');
 
+// Import the firebase-admin package
+const admin = require('firebase-admin');
+admin.initializeApp();
+const firestore = admin.firestore();
+
+function storeData(data){
+    firestore.collection('reports').add(data)
+    .then(() => {console.log('firestore: data saved.');})
+    .catch((err) => {console.log('error: ' + err);});
+}
+
+function setDateAndTime(data){
+    const dateTime = new Date().toISOString().replace('T', ' ').substr(0, 19);
+    data.fecha = dateTime;
+}
+
 // Instantiate the Dialogflow client.
 const app = dialogflow({debug: true});
 
@@ -44,7 +60,7 @@ app.intent('nombre', (conv, {person}) => {
 // Handle the Dialogflow intent named 'id'.
 // The intent collects a parameter named 'number'.
 app.intent('id', (conv, {number}) => {
-    conv.data.id = number;
+    conv.data.identificacion = number;
     conv.ask('Gracias '+ conv.data.name +', he recibido tu identificación. ' + 
     '¿A cuál compañía aseguradora estás afiliado?');
     conv.ask(new Suggestions(insuranceCarriers));
@@ -87,7 +103,7 @@ app.intent('color', (conv, {color}) => {
 // The intent collects a parameter named 'any'.
 app.intent('marca', (conv, {any}) => {
     conv.data.marca = any;
-    conv.ask('Fue reportada la marca de tu vehículo como: ' + conv.data.marca + '.' +
+    conv.ask('Fue reportada la marca de tu vehículo como: ' + conv.data.marca + '. ' +
     'Ahora, ¿Cuál es el modelo de tu vehículo?');
 });
 
@@ -103,9 +119,11 @@ app.intent('modelo', (conv, {any}) => {
 // The intent collects a parameter named 'number'.
 app.intent('year', (conv, {number}) => {
     conv.data.year = number;
-    conv.close('El año de tu vehículo es ' + conv.data.year +
-    ' Hemos completado las preguntas; tu reporte será generado. Recuerda que tomar fotos de la escena te será de gran ayuda, igual que tomar datos de contacto de personas involucradas.'
-    +' Hasta luego!');
+    setDateAndTime(conv.data);
+    storeData(conv.data); // send data to firestore (database)
+    conv.close('El año de tu vehículo fue registrado: ' + conv.data.year + '. ' +
+    'Hemos completado las preguntas; tu reporte será generado. Recuerda que tomar fotos de la escena te será de gran ayuda, igual que tomar datos de contacto de personas involucradas.'
+    + ' Hasta luego!');
 });
 
 // Set the DialogflowApp object to handle the HTTPS POST request.
